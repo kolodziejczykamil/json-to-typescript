@@ -34,9 +34,12 @@ export function Toast({ message, type = 'success', duration = 3000, onClose }: T
       }`}
       role="alert"
       aria-live="polite"
+      aria-atomic="true"
     >
       <div className="flex items-center gap-2">
-        <span className="text-lg">{type === 'success' ? '✓' : '✗'}</span>
+        <span className="text-lg" aria-hidden="true">
+          {type === 'success' ? '✓' : '✗'}
+        </span>
         <span className="text-sm font-medium">{message}</span>
       </div>
     </div>

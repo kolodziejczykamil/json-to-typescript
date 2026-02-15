@@ -21,6 +21,7 @@ export function ToolContainer() {
     setJsonInput,
     tsOutput,
     error,
+    errorLine,
     rootTypeName,
     setRootTypeName,
     conversionOptions,
@@ -48,7 +49,7 @@ export function ToolContainer() {
 
   const handleDownload = (): void => {
     downloadFile(tsOutput, `${rootTypeName}.ts`)
-    showToast('File downloaded!', 'success')
+    showToast('Download started!', 'success')
   }
 
   const errorMessage = error?.message
@@ -84,6 +85,7 @@ export function ToolContainer() {
             onClear={clearAll}
             onPaste={pasteFromClipboard}
             error={errorMessage}
+            errorLine={errorLine}
             isValid={isJsonValid}
           />
         </div>
