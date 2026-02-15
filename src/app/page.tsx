@@ -1,39 +1,105 @@
+'use client'
+
+import { Footer } from '@/components/layout/Footer'
+import { Navbar } from '@/components/layout/Navbar'
+import { SeoContent } from '@/components/layout/SeoContent'
+import { JsonInput } from '@/components/tool/JsonInput'
+import { OptionsBar } from '@/components/tool/OptionsBar'
+import { QuickExamples } from '@/components/tool/QuickExamples'
+import { TsOutput } from '@/components/tool/TsOutput'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { useJsonToTs } from '@/features/json-to-ts'
+import { getTranslations } from '@/lib/i18n'
+
 export default function Home() {
+  const { language } = useLanguage()
+  const t = getTranslations(language)
+
+  const {
+    jsonInput,
+    setJsonInput,
+    tsOutput,
+    error,
+    rootTypeName,
+    setRootTypeName,
+    conversionOptions,
+    generateTypes,
+    formatJson,
+    clearAll,
+    pasteFromClipboard,
+    copyToClipboard,
+    downloadFile,
+    loadExample,
+    updateOutputFormat,
+    updateReadonlyFields,
+    updateOptionalFields,
+  } = useJsonToTs()
+
+  const handleCopy = (): void => {
+    void copyToClipboard(tsOutput)
+  }
+
+  const handleDownload = (): void => {
+    downloadFile(tsOutput, `${rootTypeName}.ts`)
+  }
+
+  const errorMessage = error?.message ?? undefined
+
   return (
-    <main className="min-h-screen bg-slate-900 p-4 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-4xl font-bold text-white md:text-5xl">
-            JSON → TypeScript Generator
-          </h1>
-          <p className="text-lg text-slate-400">Convert JSON to TypeScript types instantly</p>
-        </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+      <Navbar />
+      <main className="pt-16">
+        <div className="mx-auto max-w-[1800px] px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mb-6 text-center">
+            <h1 className="mb-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+              {t.hero.title}
+            </h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400 md:text-base">
+              {t.hero.subtitle}
+            </p>
+          </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-lg border border-slate-700 bg-slate-800 p-6">
-            <h2 className="mb-4 text-lg font-semibold text-slate-300">JSON Input</h2>
-            <div className="min-h-[400px] rounded border border-slate-600 bg-slate-900 p-4 font-mono text-sm text-slate-400">
-              <p className="text-slate-500">Paste your JSON here...</p>
+          <OptionsBar
+            rootTypeName={rootTypeName}
+            onRootTypeNameChange={setRootTypeName}
+            outputFormat={conversionOptions.outputFormat === 'interface'}
+            onOutputFormatChange={updateOutputFormat}
+            readonlyFields={conversionOptions.readonlyFields}
+            onReadonlyFieldsChange={updateReadonlyFields}
+            optionalFields={conversionOptions.optionalFields}
+            onOptionalFieldsChange={updateOptionalFields}
+            onGenerate={generateTypes}
+          />
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="h-[calc(100vh-360px)] min-h-[500px]">
+              <JsonInput
+                value={jsonInput}
+                onChange={setJsonInput}
+                onFormat={formatJson}
+                onClear={clearAll}
+                onPaste={pasteFromClipboard}
+                error={errorMessage}
+              />
+            </div>
+            <div className="h-[calc(100vh-360px)] min-h-[500px]">
+              <TsOutput
+                content={tsOutput}
+                onCopy={handleCopy}
+                onDownload={handleDownload}
+                hasContent={tsOutput.length > 0}
+              />
             </div>
           </div>
 
-          <div className="rounded-lg border border-slate-700 bg-slate-800 p-6">
-            <h2 className="mb-4 text-lg font-semibold text-slate-300">TypeScript Output</h2>
-            <div className="min-h-[400px] rounded border border-slate-600 bg-slate-900 p-4 font-mono text-sm text-slate-400">
-              <p className="text-slate-500">Generated types will appear here...</p>
-            </div>
+          <div className="mt-6">
+            <QuickExamples onLoadExample={loadExample} />
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <button
-            disabled
-            className="rounded-lg bg-indigo-600 px-8 py-3 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-indigo-700 disabled:hover:bg-indigo-600"
-          >
-            Generate TypeScript
-          </button>
-        </div>
-      </div>
-    </main>
+        <SeoContent />
+      </main>
+      <Footer />
+    </div>
   )
 }

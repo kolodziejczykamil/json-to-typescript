@@ -10,3 +10,21 @@
 body {
   @apply bg-slate-900 text-slate-100;
 }
+
+.dark body {
+  @apply bg-slate-900 text-slate-100;
+}
+
+.light body {
+  @apply bg-white text-slate-900;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

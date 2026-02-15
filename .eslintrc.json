@@ -13,6 +13,13 @@
     "project": "./tsconfig.json"
   },
   "plugins": ["@typescript-eslint", "import"],
+  "ignorePatterns": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**",
+    "jest.config.js",
+    "jest.setup.js"
+  ],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
