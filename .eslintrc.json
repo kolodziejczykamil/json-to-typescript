@@ -17,6 +17,7 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/__tests__/**",
+    "vitest.config.ts",
     "jest.config.js",
     "jest.setup.js"
   ],

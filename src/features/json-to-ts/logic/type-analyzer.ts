@@ -29,12 +29,17 @@ function analyzeArrayType(
   }
 
   if (types.size === 1) {
-    const singleType = Array.from(types)[0]
+    const singleType = Array.from(types)[0]!
     return `${singleType}[]`
   }
 
   const unionType = Array.from(types).sort().join(' | ')
   return `(${unionType})[]`
+}
+
+function getObjectShapeKey(obj: Record<string, unknown>): string {
+  const sortedKeys = Object.keys(obj).sort()
+  return sortedKeys.join('|')
 }
 
 function analyzeObjectType(
@@ -44,13 +49,19 @@ function analyzeObjectType(
   key: string | undefined,
   options: ConversionOptions,
 ): string {
+  const shapeKey = getObjectShapeKey(obj)
   const interfaceName = key
     ? generateInterfaceName(key, parentName)
     : generateInterfaceName('Item', parentName)
 
   const existingInterface = interfaces.get(interfaceName)
   if (existingInterface) {
-    return existingInterface.name
+    const existingShapeKey = getObjectShapeKey(
+      Object.fromEntries(existingInterface.fields.map(f => [f.key, null])),
+    )
+    if (existingShapeKey === shapeKey) {
+      return existingInterface.name
+    }
   }
 
   const fields: InterfaceField[] = []
@@ -64,9 +75,11 @@ function analyzeObjectType(
       const nonNullValues = Object.values(obj).filter(v => v !== null)
       if (nonNullValues.length > 0) {
         const sampleValue = nonNullValues[0]
-        const sampleType = analyzeType(sampleValue, interfaces, interfaceName, fieldKey, options)
-        if (sampleType !== 'null') {
-          fieldType = `${sampleType} | null`
+        if (sampleValue !== undefined) {
+          const sampleType = analyzeType(sampleValue, interfaces, interfaceName, fieldKey, options)
+          if (sampleType !== 'null') {
+            fieldType = `${sampleType} | null`
+          }
         }
       }
     }
@@ -111,6 +124,26 @@ export function analyzeRootType(
 ): { interfaces: InterfaceMap; rootType: string } {
   const interfaces: InterfaceMap = new Map()
 
+  if (isArray(value)) {
+    if (value.length === 0) {
+      return { interfaces, rootType: 'any[]' }
+    }
+
+    const types = new Set<string>()
+    for (const item of value) {
+      const itemType = analyzeType(item, interfaces, rootName, undefined, options)
+      types.add(itemType)
+    }
+
+    if (types.size === 1) {
+      const singleType = Array.from(types)[0]!
+      return { interfaces, rootType: `${singleType}[]` }
+    }
+
+    const unionType = Array.from(types).sort().join(' | ')
+    return { interfaces, rootType: `(${unionType})[]` }
+  }
+
   if (isRecord(value)) {
     const fields: InterfaceField[] = []
     const sortedKeys = Object.keys(value).sort()
@@ -123,9 +156,11 @@ export function analyzeRootType(
         const nonNullValues = Object.values(value).filter(v => v !== null)
         if (nonNullValues.length > 0) {
           const sampleValue = nonNullValues[0]
-          const sampleType = analyzeType(sampleValue, interfaces, rootName, key, options)
-          if (sampleType !== 'null') {
-            fieldType = `${sampleType} | null`
+          if (sampleValue !== undefined) {
+            const sampleType = analyzeType(sampleValue, interfaces, rootName, key, options)
+            if (sampleType !== 'null') {
+              fieldType = `${sampleType} | null`
+            }
           }
         }
       }
@@ -137,6 +172,10 @@ export function analyzeRootType(
     return { interfaces, rootType: rootName }
   }
 
-  const rootType = analyzeType(value, interfaces, rootName, undefined, options)
-  return { interfaces, rootType }
+  if (isPrimitive(value)) {
+    const primitiveType = analyzePrimitiveType(value)
+    return { interfaces, rootType: primitiveType }
+  }
+
+  return { interfaces, rootType: 'unknown' }
 }

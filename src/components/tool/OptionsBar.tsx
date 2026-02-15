@@ -13,6 +13,7 @@ type OptionsBarProps = {
   readonly optionalFields: boolean
   readonly onOptionalFieldsChange: (value: boolean) => void
   readonly onGenerate: () => void
+  readonly isJsonValid: boolean
 }
 
 export function OptionsBar({
@@ -25,23 +26,29 @@ export function OptionsBar({
   optionalFields,
   onOptionalFieldsChange,
   onGenerate,
+  isJsonValid,
 }: OptionsBarProps) {
   const { language } = useLanguage()
   const t = getTranslations(language)
 
   return (
-    <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <div className="sticky top-16 z-30 mb-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
         <div className="flex-1 min-w-[200px]">
-          <label className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-400">
+          <label
+            htmlFor="root-type-name"
+            className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-400"
+          >
             {t.options.rootTypeName}
           </label>
           <input
+            id="root-type-name"
             type="text"
             value={rootTypeName}
             onChange={e => onRootTypeNameChange(e.target.value)}
             className="w-full rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-500 transition-colors focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:focus:border-indigo-500"
             placeholder="RootObject"
+            aria-label={t.options.rootTypeName}
           />
         </div>
 
@@ -53,6 +60,7 @@ export function OptionsBar({
                 checked={outputFormat}
                 onChange={e => onOutputFormatChange(e.target.checked)}
                 className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 bg-white transition-all checked:border-indigo-600 checked:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 dark:border-slate-600 dark:bg-slate-800 dark:checked:border-indigo-500 dark:checked:bg-indigo-500"
+                aria-label={t.options.outputFormat}
               />
               <svg
                 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -60,6 +68,7 @@ export function OptionsBar({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth="3"
+                aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
@@ -81,6 +90,7 @@ export function OptionsBar({
                 checked={readonlyFields}
                 onChange={e => onReadonlyFieldsChange(e.target.checked)}
                 className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 bg-white transition-all checked:border-indigo-600 checked:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 dark:border-slate-600 dark:bg-slate-800 dark:checked:border-indigo-500 dark:checked:bg-indigo-500"
+                aria-label={t.options.readonlyFields}
               />
               <svg
                 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -88,6 +98,7 @@ export function OptionsBar({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth="3"
+                aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
@@ -104,6 +115,7 @@ export function OptionsBar({
                 checked={optionalFields}
                 onChange={e => onOptionalFieldsChange(e.target.checked)}
                 className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 bg-white transition-all checked:border-indigo-600 checked:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 dark:border-slate-600 dark:bg-slate-800 dark:checked:border-indigo-500 dark:checked:bg-indigo-500"
+                aria-label={t.options.optionalFields}
               />
               <svg
                 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -111,6 +123,7 @@ export function OptionsBar({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth="3"
+                aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
@@ -123,13 +136,18 @@ export function OptionsBar({
 
         <button
           onClick={onGenerate}
-          className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 font-semibold text-white transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:scale-95 dark:focus:ring-offset-slate-800"
+          disabled={!isJsonValid}
+          className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 font-semibold text-white transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-slate-800"
           aria-label={t.aria.generateTypes}
+          aria-disabled={!isJsonValid}
         >
           <span className="text-lg" aria-hidden="true">
             ✨
           </span>
           <span>{t.buttons.generate}</span>
+          <span className="ml-2 text-xs opacity-75" aria-hidden="true">
+            (Ctrl/Cmd + Enter)
+          </span>
         </button>
       </div>
     </div>

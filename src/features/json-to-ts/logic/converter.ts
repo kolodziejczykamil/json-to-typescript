@@ -1,6 +1,7 @@
 import type { ConversionOptions } from '../types'
+import { isArray, isPrimitive, isRecord } from '../utils/type-guards'
 
-import { formatInterfaces } from './formatter'
+import { formatInterfaces, formatPrimitiveType } from './formatter'
 import { analyzeRootType } from './type-analyzer'
 
 export function convertJsonToTypescript(
@@ -21,15 +22,16 @@ export function convertJsonToTypescript(
     parsed = jsonInput
   }
 
-  const { interfaces } = analyzeRootType(parsed, rootName, options)
+  const { interfaces, rootType } = analyzeRootType(parsed, rootName, options)
 
   if (interfaces.size === 0) {
-    const typeStr = typeof parsed
-    if (options.outputFormat === 'type') {
-      return `export type ${rootName} = ${typeStr}`
-    }
-    return `export interface ${rootName} {\n  value: ${typeStr}\n}`
+    return formatPrimitiveType(rootType, rootName, options)
   }
 
-  return formatInterfaces(interfaces, options)
+  if (isArray(parsed) || isPrimitive(parsed) || !isRecord(parsed)) {
+    const formatted = formatInterfaces(interfaces, rootType, options)
+    return `${formatted}\n\nexport type ${rootName} = ${rootType}`
+  }
+
+  return formatInterfaces(interfaces, rootType, options)
 }

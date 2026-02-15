@@ -1,6 +1,10 @@
 'use client'
 
+import { useLanguage } from '@/contexts/LanguageContext'
 import { useJsonToTs } from '@/features/json-to-ts'
+import { getTranslations } from '@/lib/i18n'
+
+import { Toast, useToast } from '../ui/Toast'
 
 import { JsonInput } from './JsonInput'
 import { OptionsBar } from './OptionsBar'
@@ -8,6 +12,10 @@ import { QuickExamples } from './QuickExamples'
 import { TsOutput } from './TsOutput'
 
 export function ToolContainer() {
+  const { language } = useLanguage()
+  const t = getTranslations(language)
+  const { toast, showToast, hideToast } = useToast()
+
   const {
     jsonInput,
     setJsonInput,
@@ -16,6 +24,7 @@ export function ToolContainer() {
     rootTypeName,
     setRootTypeName,
     conversionOptions,
+    isJsonValid,
     generateTypes,
     formatJson,
     clearAll,
@@ -28,18 +37,31 @@ export function ToolContainer() {
     updateOptionalFields,
   } = useJsonToTs()
 
-  const handleCopy = (): void => {
-    void copyToClipboard(tsOutput)
+  const handleCopy = async (): Promise<void> => {
+    const success = await copyToClipboard(tsOutput)
+    if (success) {
+      showToast('Copied to clipboard!', 'success')
+    } else {
+      showToast('Failed to copy', 'error')
+    }
   }
 
   const handleDownload = (): void => {
     downloadFile(tsOutput, `${rootTypeName}.ts`)
+    showToast('File downloaded!', 'success')
   }
 
-  const errorMessage = error?.message ?? undefined
+  const errorMessage = error?.message
 
   return (
     <>
+      <div className="mb-6 text-center">
+        <h1 className="mb-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400 md:text-4xl">
+          {t.hero.title}
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 md:text-base">{t.hero.subtitle}</p>
+      </div>
+
       <OptionsBar
         rootTypeName={rootTypeName}
         onRootTypeNameChange={setRootTypeName}
@@ -50,6 +72,7 @@ export function ToolContainer() {
         optionalFields={conversionOptions.optionalFields}
         onOptionalFieldsChange={updateOptionalFields}
         onGenerate={generateTypes}
+        isJsonValid={isJsonValid}
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -61,6 +84,7 @@ export function ToolContainer() {
             onClear={clearAll}
             onPaste={pasteFromClipboard}
             error={errorMessage}
+            isValid={isJsonValid}
           />
         </div>
         <div className="h-[calc(100vh-360px)] min-h-[500px]">
@@ -76,6 +100,8 @@ export function ToolContainer() {
       <div className="mt-6">
         <QuickExamples onLoadExample={loadExample} />
       </div>
+
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </>
   )
 }

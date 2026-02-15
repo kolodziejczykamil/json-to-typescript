@@ -1,9 +1,10 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { convertJsonToTypescript } from '../logic/converter'
 import type { ConversionError, ConversionOptions } from '../types'
+import { validateJson } from '../utils/json-validator'
 
 const DEFAULT_ROOT_NAME = 'RootObject'
 const DEFAULT_OPTIONS: ConversionOptions = {
@@ -36,6 +37,36 @@ export function useJsonToTs(initialJson?: string) {
   const [error, setError] = useState<ConversionError | undefined>()
   const [rootTypeName, setRootTypeName] = useState<string>(DEFAULT_ROOT_NAME)
   const [conversionOptions, setConversionOptions] = useState<ConversionOptions>(DEFAULT_OPTIONS)
+  const [isJsonValid, setIsJsonValid] = useState<boolean>(true)
+  const validationTimeoutRef = useRef<NodeJS.Timeout>()
+
+  const validateJsonInput = useCallback((input: string) => {
+    if (validationTimeoutRef.current) {
+      clearTimeout(validationTimeoutRef.current)
+    }
+
+    validationTimeoutRef.current = setTimeout(() => {
+      const validation = validateJson(input)
+      setIsJsonValid(validation.valid)
+      if (!validation.valid && validation.error) {
+        setError({
+          type: 'invalid-json',
+          message: validation.error,
+        })
+      } else if (validation.valid) {
+        setError(undefined)
+      }
+    }, 300)
+  }, [])
+
+  useEffect(() => {
+    validateJsonInput(jsonInput)
+    return () => {
+      if (validationTimeoutRef.current) {
+        clearTimeout(validationTimeoutRef.current)
+      }
+    }
+  }, [jsonInput, validateJsonInput])
 
   const generateTypes = useCallback(() => {
     if (!jsonInput.trim()) {
@@ -44,11 +75,24 @@ export function useJsonToTs(initialJson?: string) {
         message: 'JSON input is empty',
       })
       setTsOutput('')
+      setIsJsonValid(false)
+      return
+    }
+
+    const validation = validateJson(jsonInput)
+    if (!validation.valid) {
+      setError({
+        type: 'invalid-json',
+        message: validation.error ?? 'Invalid JSON format',
+      })
+      setTsOutput('')
+      setIsJsonValid(false)
       return
     }
 
     try {
       setError(undefined)
+      setIsJsonValid(true)
       const result = convertJsonToTypescript(jsonInput, rootTypeName, conversionOptions)
       setTsOutput(result)
     } catch (err) {
@@ -58,6 +102,7 @@ export function useJsonToTs(initialJson?: string) {
         message,
       })
       setTsOutput('')
+      setIsJsonValid(false)
     }
   }, [jsonInput, rootTypeName, conversionOptions])
 
@@ -67,11 +112,13 @@ export function useJsonToTs(initialJson?: string) {
       const formatted = JSON.stringify(parsed, null, 2)
       setJsonInput(formatted)
       setError(undefined)
+      setIsJsonValid(true)
     } catch {
       setError({
         type: 'invalid-json',
         message: 'Invalid JSON format',
       })
+      setIsJsonValid(false)
     }
   }, [jsonInput])
 
@@ -79,6 +126,7 @@ export function useJsonToTs(initialJson?: string) {
     setJsonInput('')
     setTsOutput('')
     setError(undefined)
+    setIsJsonValid(true)
   }, [])
 
   const pasteFromClipboard = useCallback(async () => {
@@ -86,6 +134,7 @@ export function useJsonToTs(initialJson?: string) {
       const text = await navigator.clipboard.readText()
       setJsonInput(text)
       setError(undefined)
+      setIsJsonValid(true)
     } catch {
       setError({
         type: 'clipboard-read',
@@ -94,14 +143,16 @@ export function useJsonToTs(initialJson?: string) {
     }
   }, [])
 
-  const copyToClipboard = useCallback(async (text: string) => {
+  const copyToClipboard = useCallback(async (text: string): Promise<boolean> => {
     try {
       await navigator.clipboard.writeText(text)
+      return true
     } catch {
       setError({
         type: 'clipboard-write',
         message: 'Failed to copy to clipboard',
       })
+      return false
     }
   }, [])
 
@@ -121,6 +172,7 @@ export function useJsonToTs(initialJson?: string) {
     setJsonInput(json)
     setError(undefined)
     setTsOutput('')
+    setIsJsonValid(true)
   }, [])
 
   const updateOutputFormat = useCallback((isInterface: boolean) => {
@@ -144,6 +196,20 @@ export function useJsonToTs(initialJson?: string) {
     }))
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        event.preventDefault()
+        generateTypes()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [generateTypes])
+
   return {
     jsonInput,
     setJsonInput,
@@ -152,6 +218,7 @@ export function useJsonToTs(initialJson?: string) {
     rootTypeName,
     setRootTypeName,
     conversionOptions,
+    isJsonValid,
     generateTypes,
     formatJson,
     clearAll,

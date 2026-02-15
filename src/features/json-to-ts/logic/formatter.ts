@@ -2,6 +2,7 @@ import type { ConversionOptions, InterfaceDefinition } from '../types'
 
 export function formatInterfaces(
   interfaces: Map<string, InterfaceDefinition>,
+  rootType: string,
   options: ConversionOptions,
 ): string {
   const sortedInterfaces = Array.from(interfaces.values()).sort((a, b) => {
@@ -10,7 +11,7 @@ export function formatInterfaces(
     return 0
   })
 
-  return sortedInterfaces
+  const formatted = sortedInterfaces
     .map(iface => {
       const fields = iface.fields
         .map(field => {
@@ -30,4 +31,17 @@ export function formatInterfaces(
       return `export interface ${iface.name} {\n${fields}\n}`
     })
     .join('\n\n')
+
+  return formatted.trim()
+}
+
+export function formatPrimitiveType(
+  rootType: string,
+  rootName: string,
+  options: ConversionOptions,
+): string {
+  if (options.outputFormat === 'type') {
+    return `export type ${rootName} = ${rootType}`
+  }
+  return `export interface ${rootName} {\n  value: ${rootType}\n}`
 }

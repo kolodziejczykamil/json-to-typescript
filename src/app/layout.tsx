@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: '%s | JSON to TypeScript Generator',
   },
   description:
-    'Free online JSON to TypeScript converter. Instantly generate TypeScript interfaces from JSON with support for nested objects and arrays.',
+    'Free online JSON to TypeScript converter. Instantly generate TypeScript interfaces from JSON with support for nested objects and arrays. Convert JSON to TS online, generate typescript interfaces, and create type-safe definitions.',
   keywords: [
     'json to typescript',
     'json to ts',
@@ -30,6 +30,8 @@ export const metadata: Metadata = {
     'code generator',
     'json parser',
     'typescript converter tool',
+    'json to typescript online',
+    'typescript interface generator',
   ],
   authors: [{ name: 'JSON to TypeScript Generator' }],
   creator: 'JSON to TypeScript Generator',
@@ -100,7 +102,7 @@ const structuredData = {
   '@type': ['WebApplication', 'SoftwareApplication'],
   name: 'JSON to TypeScript Generator',
   description:
-    'Free online tool to convert JSON to TypeScript interfaces instantly. Generate type-safe TypeScript definitions from any JSON object.',
+    'Free online tool to convert JSON to TypeScript interfaces instantly. Generate type-safe TypeScript definitions from any JSON object. Support for nested objects, arrays, and complex data structures.',
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Web',
   url: 'https://json-to-typescript.vercel.app',
@@ -121,12 +123,15 @@ const structuredData = {
     'Copy to clipboard',
     'Download as TypeScript file',
     'Free and open source',
+    'No registration required',
+    'Works entirely in browser',
   ],
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.8',
     ratingCount: '150',
   },
+  keywords: 'json to typescript, json to ts, typescript generator, json converter',
 }
 
 export default function RootLayout({
