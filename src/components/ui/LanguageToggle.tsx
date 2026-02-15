@@ -14,7 +14,7 @@ export function LanguageToggle() {
   return (
     <button
       onClick={toggleLanguage}
-      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-slate-300 transition-colors hover:bg-slate-700"
+      className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-slate-300 transition-colors hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       aria-label={t.aria.switchLanguage}
     >
       <span className="text-base">{language === 'en' ? '🇵🇱' : '🇬🇧'}</span>

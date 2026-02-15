@@ -58,7 +58,7 @@ export function JsonInput({
           <button
             onClick={onFormat}
             disabled={!isValid || !value.trim()}
-            className="rounded px-2.5 py-1 text-xs text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+            className="rounded px-2.5 py-1 text-xs text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 dark:focus:ring-offset-slate-800"
             aria-label={t.aria.formatJson}
             aria-disabled={!isValid || !value.trim()}
           >
@@ -66,14 +66,14 @@ export function JsonInput({
           </button>
           <button
             onClick={onPaste}
-            className="rounded px-2.5 py-1 text-xs text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+            className="rounded px-2.5 py-1 text-xs text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 dark:focus:ring-offset-slate-800"
             aria-label={t.aria.pasteFromClipboard}
           >
             {t.buttons.paste}
           </button>
           <button
             onClick={onClear}
-            className="rounded px-2.5 py-1 text-xs text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+            className="rounded px-2.5 py-1 text-xs text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 dark:focus:ring-offset-slate-800"
             aria-label={t.aria.clearInput}
           >
             {t.buttons.clear}
@@ -117,7 +117,7 @@ export function JsonInput({
           <textarea
             value={value}
             onChange={e => onChange(e.target.value)}
-            className={`h-full w-full flex-1 resize-none overflow-auto bg-transparent px-2 py-2 font-mono text-sm leading-relaxed outline-none transition-colors ${
+            className={`h-full w-full flex-1 resize-none overflow-auto bg-transparent px-2 py-2 font-mono text-sm leading-relaxed outline-none transition-colors focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
               !isValid && value.trim()
                 ? 'text-red-600 dark:text-red-400'
                 : 'text-slate-800 dark:text-slate-300'

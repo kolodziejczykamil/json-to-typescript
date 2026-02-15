@@ -20,7 +20,11 @@ export function Navbar() {
       >
         <div className="mx-auto max-w-full px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3" aria-label={t.aria.home}>
+            <Link
+              href="/"
+              className="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded"
+              aria-label={t.aria.home}
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white">
                 <span className="text-lg font-bold" aria-hidden="true">
                   &lt;/&gt;
@@ -45,7 +49,7 @@ export function Navbar() {
                 href="https://github.com/kolodziejczykamil/json-to-typescript"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
+                className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 aria-label={t.aria.viewGithub}
               >
                 {t.nav.github}

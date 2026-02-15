@@ -26,6 +26,7 @@ export function ToolContainer() {
     setRootTypeName,
     conversionOptions,
     isJsonValid,
+    isConverting,
     generateTypes,
     formatJson,
     clearAll,
@@ -49,7 +50,7 @@ export function ToolContainer() {
 
   const handleDownload = (): void => {
     downloadFile(tsOutput, `${rootTypeName}.ts`)
-    showToast('Download started!', 'success')
+    showToast('Download TS file', 'success')
   }
 
   const errorMessage = error?.message
@@ -74,6 +75,7 @@ export function ToolContainer() {
         onOptionalFieldsChange={updateOptionalFields}
         onGenerate={generateTypes}
         isJsonValid={isJsonValid}
+        isConverting={isConverting}
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -95,6 +97,7 @@ export function ToolContainer() {
             onCopy={handleCopy}
             onDownload={handleDownload}
             hasContent={tsOutput.length > 0}
+            isConverting={isConverting}
           />
         </div>
       </div>

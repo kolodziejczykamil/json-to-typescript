@@ -39,6 +39,7 @@ export function useJsonToTs(initialJson?: string) {
   const [conversionOptions, setConversionOptions] = useState<ConversionOptions>(DEFAULT_OPTIONS)
   const [isJsonValid, setIsJsonValid] = useState<boolean>(true)
   const [errorLine, setErrorLine] = useState<number | undefined>()
+  const [isConverting, setIsConverting] = useState<boolean>(false)
   const validationTimeoutRef = useRef<NodeJS.Timeout>()
 
   const validateJsonInput = useCallback((input: string) => {
@@ -95,22 +96,28 @@ export function useJsonToTs(initialJson?: string) {
       return
     }
 
-    try {
-      setError(undefined)
-      setErrorLine(undefined)
-      setIsJsonValid(true)
-      const result = convertJsonToTypescript(jsonInput, rootTypeName, conversionOptions)
-      setTsOutput(result)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error occurred'
-      setError({
-        type: 'invalid-json',
-        message,
-      })
-      setTsOutput('')
-      setIsJsonValid(false)
-      setErrorLine(undefined)
-    }
+    setIsConverting(true)
+    setError(undefined)
+    setErrorLine(undefined)
+    setIsJsonValid(true)
+
+    setTimeout(() => {
+      try {
+        const result = convertJsonToTypescript(jsonInput, rootTypeName, conversionOptions)
+        setTsOutput(result)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error occurred'
+        setError({
+          type: 'invalid-json',
+          message,
+        })
+        setTsOutput('')
+        setIsJsonValid(false)
+        setErrorLine(undefined)
+      } finally {
+        setIsConverting(false)
+      }
+    }, 50)
   }, [jsonInput, rootTypeName, conversionOptions])
 
   const formatJson = useCallback(() => {
@@ -213,7 +220,7 @@ export function useJsonToTs(initialJson?: string) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
         event.preventDefault()
-        if (isJsonValid) {
+        if (isJsonValid && !isConverting) {
           generateTypes()
         }
       }
@@ -223,10 +230,10 @@ export function useJsonToTs(initialJson?: string) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [generateTypes, isJsonValid])
+  }, [generateTypes, isJsonValid, isConverting])
 
   const memoizedOutput = useMemo(() => {
-    if (!isJsonValid || !jsonInput.trim()) {
+    if (!isJsonValid || !jsonInput.trim() || isConverting) {
       return ''
     }
     try {
@@ -234,7 +241,7 @@ export function useJsonToTs(initialJson?: string) {
     } catch {
       return ''
     }
-  }, [jsonInput, rootTypeName, conversionOptions, isJsonValid])
+  }, [jsonInput, rootTypeName, conversionOptions, isJsonValid, isConverting])
 
   return {
     jsonInput,
@@ -246,6 +253,7 @@ export function useJsonToTs(initialJson?: string) {
     setRootTypeName,
     conversionOptions,
     isJsonValid,
+    isConverting,
     generateTypes,
     formatJson,
     clearAll,

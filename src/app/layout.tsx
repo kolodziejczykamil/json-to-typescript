@@ -8,13 +8,10 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://json-to-typescript.vercel.app'),
-  title: {
-    default: 'JSON to TypeScript Generator – Convert JSON to TS Interfaces Online',
-    template: '%s | JSON to TypeScript Generator',
-  },
+  metadataBase: new URL('https://json-to-typescript-sigma.vercel.app'),
+  title: 'JSON to TypeScript generator online | convert JSON to TS interface',
   description:
-    'Free online JSON to TypeScript converter. Instantly generate TypeScript interfaces from JSON with support for nested objects and arrays. Convert JSON to TS online, generate typescript interfaces, and create type-safe definitions.',
+    'Free online JSON to TypeScript converter. Instantly generate TypeScript interfaces from JSON with support for nested objects and arrays. Convert JSON to TS online.',
   keywords: [
     'json to typescript',
     'json to ts',
@@ -43,24 +40,24 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: '/',
+    canonical: 'https://json-to-typescript-sigma.vercel.app',
     languages: {
-      'en-US': '/',
-      'pl-PL': '/pl',
+      'en-US': 'https://json-to-typescript-sigma.vercel.app',
+      'pl-PL': 'https://json-to-typescript-sigma.vercel.app/pl',
     },
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
     alternateLocale: 'pl_PL',
-    url: 'https://json-to-typescript.vercel.app',
+    url: 'https://json-to-typescript-sigma.vercel.app',
     siteName: 'JSON to TypeScript Generator',
-    title: 'JSON to TypeScript Generator – Convert JSON to TS Interfaces Online',
+    title: 'JSON to TypeScript generator online | convert JSON to TS interface',
     description:
       'Free online JSON to TypeScript converter. Instantly generate TypeScript interfaces from JSON with support for nested objects and arrays.',
     images: [
       {
-        url: '/og-image.png',
+        url: 'https://json-to-typescript-sigma.vercel.app/og-image.png',
         width: 1200,
         height: 630,
         alt: 'JSON to TypeScript Generator',
@@ -69,10 +66,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'JSON to TypeScript Generator – Convert JSON to TS Interfaces Online',
+    title: 'JSON to TypeScript generator online | convert JSON to TS interface',
     description:
       'Free online JSON to TypeScript converter. Instantly generate TypeScript interfaces from JSON.',
-    images: ['/og-image.png'],
+    images: ['https://json-to-typescript-sigma.vercel.app/og-image.png'],
     creator: '@json2ts',
   },
   robots: {
@@ -105,7 +102,7 @@ const structuredData = {
     'Free online tool to convert JSON to TypeScript interfaces instantly. Generate type-safe TypeScript definitions from any JSON object. Support for nested objects, arrays, and complex data structures.',
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Web',
-  url: 'https://json-to-typescript.vercel.app',
+  url: 'https://json-to-typescript-sigma.vercel.app',
   author: {
     '@type': 'Organization',
     name: 'JSON to TypeScript Generator',
@@ -125,6 +122,8 @@ const structuredData = {
     'Free and open source',
     'No registration required',
     'Works entirely in browser',
+    'Real-time JSON validation',
+    'Error highlighting',
   ],
   aggregateRating: {
     '@type': 'AggregateRating',
@@ -144,6 +143,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="canonical" href="https://json-to-typescript-sigma.vercel.app" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

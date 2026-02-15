@@ -23,7 +23,8 @@ export function Footer() {
               href="https://github.com/kolodziejczykamil/json-to-typescript"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              className="text-sm text-slate-600 transition-colors hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded dark:text-slate-400 dark:hover:text-slate-100"
+              aria-label="View GitHub repository"
             >
               GitHub
             </Link>

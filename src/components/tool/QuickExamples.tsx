@@ -175,7 +175,7 @@ export function QuickExamples({ onLoadExample }: QuickExamplesProps) {
       <div className="relative flex items-center justify-center">
         <button
           onClick={scrollLeft}
-          className="absolute left-0 z-10 rounded-lg bg-white p-1.5 text-slate-400 shadow-md transition-colors hover:bg-slate-50 hover:text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+          className="absolute left-0 z-10 rounded-lg bg-white p-1.5 text-slate-400 shadow-md transition-colors hover:bg-slate-50 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
           aria-label={t.aria.scrollLeft}
         >
           <span className="text-base">&lt;</span>
@@ -188,7 +188,8 @@ export function QuickExamples({ onLoadExample }: QuickExamplesProps) {
             <button
               key={index}
               onClick={() => onLoadExample(example.json)}
-              className="flex min-w-[200px] flex-shrink-0 flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3 text-left transition-all hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500 dark:hover:bg-slate-700"
+              className="flex min-w-[200px] flex-shrink-0 flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3 text-left transition-all hover:border-indigo-400 hover:bg-indigo-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-500 dark:hover:bg-slate-700"
+              aria-label={`Load ${t.examples[TITLE_MAP[example.titleKey]]} example`}
             >
               <div className="text-2xl">{example.icon}</div>
               <div className="w-full">
@@ -207,7 +208,7 @@ export function QuickExamples({ onLoadExample }: QuickExamplesProps) {
         </div>
         <button
           onClick={scrollRight}
-          className="absolute right-0 z-10 rounded-lg bg-white p-1.5 text-slate-400 shadow-md transition-colors hover:bg-slate-50 hover:text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+          className="absolute right-0 z-10 rounded-lg bg-white p-1.5 text-slate-400 shadow-md transition-colors hover:bg-slate-50 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
           aria-label={t.aria.scrollRight}
         >
           <span className="text-base">&gt;</span>

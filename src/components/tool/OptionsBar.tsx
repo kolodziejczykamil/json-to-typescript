@@ -3,6 +3,8 @@
 import { useLanguage } from '@/contexts/LanguageContext'
 import { getTranslations } from '@/lib/i18n'
 
+import { LoadingSpinner } from '../ui/LoadingSpinner'
+
 type OptionsBarProps = {
   readonly rootTypeName: string
   readonly onRootTypeNameChange: (value: string) => void
@@ -14,6 +16,7 @@ type OptionsBarProps = {
   readonly onOptionalFieldsChange: (value: boolean) => void
   readonly onGenerate: () => void
   readonly isJsonValid: boolean
+  readonly isConverting: boolean
 }
 
 export function OptionsBar({
@@ -27,6 +30,7 @@ export function OptionsBar({
   onOptionalFieldsChange,
   onGenerate,
   isJsonValid,
+  isConverting,
 }: OptionsBarProps) {
   const { language } = useLanguage()
   const t = getTranslations(language)
@@ -49,7 +53,11 @@ export function OptionsBar({
             className="w-full rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-500 transition-colors focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:focus:border-indigo-500"
             placeholder="RootObject"
             aria-label={t.options.rootTypeName}
+            aria-describedby="root-type-name-description"
           />
+          <div id="root-type-name-description" className="sr-only">
+            Enter the name for the root TypeScript type or interface
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4 lg:gap-6">
@@ -61,6 +69,7 @@ export function OptionsBar({
                 onChange={e => onOutputFormatChange(e.target.checked)}
                 className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 bg-white transition-all checked:border-indigo-600 checked:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 dark:border-slate-600 dark:bg-slate-800 dark:checked:border-indigo-500 dark:checked:bg-indigo-500"
                 aria-label={t.options.outputFormat}
+                aria-describedby="output-format-description"
               />
               <svg
                 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -81,6 +90,9 @@ export function OptionsBar({
                 {t.options.interface}
               </span>
             </div>
+            <div id="output-format-description" className="sr-only">
+              Toggle between interface and type output format
+            </div>
           </label>
 
           <label className="group relative flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50">
@@ -91,6 +103,7 @@ export function OptionsBar({
                 onChange={e => onReadonlyFieldsChange(e.target.checked)}
                 className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 bg-white transition-all checked:border-indigo-600 checked:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 dark:border-slate-600 dark:bg-slate-800 dark:checked:border-indigo-500 dark:checked:bg-indigo-500"
                 aria-label={t.options.readonlyFields}
+                aria-describedby="readonly-fields-description"
               />
               <svg
                 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -106,6 +119,9 @@ export function OptionsBar({
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
               {t.options.readonlyFields}
             </span>
+            <div id="readonly-fields-description" className="sr-only">
+              Make all fields readonly in the generated TypeScript code
+            </div>
           </label>
 
           <label className="group relative flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50">
@@ -116,6 +132,7 @@ export function OptionsBar({
                 onChange={e => onOptionalFieldsChange(e.target.checked)}
                 className="peer h-5 w-5 cursor-pointer appearance-none rounded border-2 border-slate-300 bg-white transition-all checked:border-indigo-600 checked:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 dark:border-slate-600 dark:bg-slate-800 dark:checked:border-indigo-500 dark:checked:bg-indigo-500"
                 aria-label={t.options.optionalFields}
+                aria-describedby="optional-fields-description"
               />
               <svg
                 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -131,23 +148,35 @@ export function OptionsBar({
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
               {t.options.optionalFields}
             </span>
+            <div id="optional-fields-description" className="sr-only">
+              Make all fields optional in the generated TypeScript code
+            </div>
           </label>
         </div>
 
         <button
           onClick={onGenerate}
-          disabled={!isJsonValid}
+          disabled={!isJsonValid || isConverting}
           className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 font-semibold text-white transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-slate-800"
           aria-label={t.aria.generateTypes}
-          aria-disabled={!isJsonValid}
+          aria-disabled={!isJsonValid || isConverting}
         >
-          <span className="text-lg" aria-hidden="true">
-            ✨
-          </span>
-          <span>{t.buttons.generate}</span>
-          <span className="ml-2 text-xs opacity-75" aria-hidden="true">
-            (Ctrl/Cmd + Enter)
-          </span>
+          {isConverting ? (
+            <>
+              <LoadingSpinner size="sm" />
+              <span>Generating...</span>
+            </>
+          ) : (
+            <>
+              <span className="text-lg" aria-hidden="true">
+                ✨
+              </span>
+              <span>{t.buttons.generate}</span>
+              <span className="ml-2 text-xs opacity-75" aria-hidden="true">
+                (Ctrl/Cmd + Enter)
+              </span>
+            </>
+          )}
         </button>
       </div>
     </div>
